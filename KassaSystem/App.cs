@@ -7,37 +7,35 @@ public class App
     {
 
         KassaMeny();
-
-
     }
 
-    //måste fixa kvitto spar separerar för varje månad
+ 
    
-
-
-
-
 
 
 
 
     public void KassaMeny()
     {
+        
         bool isRunning = true;
+        Console.Clear();
 
         while (isRunning)
         {
-
+            Console.ForegroundColor = ConsoleColor.DarkYellow;
             Console.WriteLine("================");
-            Console.WriteLine("===   Kassa  ===");
+            Console.WriteLine("===   KASSA  ===");
             Console.WriteLine("================");
+            Console.ResetColor();
+            Console.WriteLine("");
             Console.WriteLine("1. Ny kund");
-            Console.WriteLine("2. Admin");
+            Console.WriteLine("2. Admin");  
             Console.WriteLine("0. Avsluta");
 
 
 
-            int sel = CheckNumber(0, 1);
+            int sel = CheckNumber(0, 2);
 
             switch (sel)
             {
@@ -53,14 +51,6 @@ public class App
                 case 0:
                     isRunning = false;
                     break;
-                default:
-                    sel = Convert.ToInt32(Console.ReadLine());
-                    if (sel < 0 && sel < 2)
-                    {
-                        Console.WriteLine("Felaktigt val! Vänligen mata in en siffra 0-2");
-                        sel = Convert.ToInt32(Console.ReadLine());
-                    }
-                    break;
 
             }
 
@@ -70,37 +60,34 @@ public class App
 
     public void AdminMeny()
     {
+
         var list = new List<Product>();
 
-        if (File.Exists("Products.txt"))
-        {
-            var ladda = File.ReadAllLines("Products.txt").ToList();
-
-            foreach (var pro in ladda)
-            {
-                var newArray = pro.Split(",");
-                list.Add(new Product(int.Parse(newArray[0]), newArray[1], int.Parse(newArray[2])));
-            }
-
-        }
-
+        
         var receiptList = new List<Sale>();
+
 
         Console.Clear();
         while (true)
         {
-
+            
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
             Console.WriteLine("==================");
             Console.WriteLine("=== ADMIN MENY ===");
             Console.WriteLine("==================");
+            Console.ResetColor();
+            Console.WriteLine("");
             Console.WriteLine("1. Lägg till produkt");
             Console.WriteLine("2. Se produkter"); 
-            Console.WriteLine("0. Avsluta");
-            var sel = Console.ReadLine();
-            if (sel == "1")
+            Console.WriteLine("3. Kassa meny");
+            var sel = CheckNumber(0,3);
+           
+            if (sel == 1)
             {
-
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
                 Console.WriteLine("****LÄGG TILL PRDOUKT****");
+                Console.ResetColor();
+                Console.WriteLine("");
 
                 Console.Write("Ange produkt Id:");
                 int Id = Convert.ToInt32(Console.ReadLine());
@@ -115,29 +102,48 @@ public class App
 
 
             }
-            if (sel == "2")
+            if (sel == 2)
             {
-                foreach (var item in list)
-                {
-                    Console.WriteLine($"ProduktId: {item.ProductId} Artikel: {item.Name} Pris: {item.BasePrice} kr.");
-                }
+                Console.Clear();
+                Console.ForegroundColor = ConsoleColor.DarkBlue;
+                Console.WriteLine("-----Produkter----");
+                Console.ResetColor();
+                Console.WriteLine("");
+                var ladda = File.ReadAllLines("Products.txt").ToList();
 
-                Console.ReadLine();
+                foreach (var pro in ladda)
+                {
+                    var newArray = pro.Split(",");
+                    if (newArray.Length == 3)
+                    {
+                        list.Add(new Product(int.Parse(newArray[0]), newArray[1], int.Parse(newArray[2])));
+                    }
+                }
+                foreach (var p in list)
+                {
+                    Console.WriteLine(p.ToString());
+                }
+                Console.WriteLine("");
+
             }
-            if (sel == "0")
-                break;
+            if (sel == 3)
+                KassaMeny();
+          
+                
         }
     }
 
 
     public void Kassa()
     {
-
         Console.Clear();
-        Console.WriteLine("####KASSA####");
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
+        Console.WriteLine("####  KASSA  ####");
+        Console.WriteLine("");
+        Console.WriteLine("-----Produkter----");
+        Console.ResetColor();
         var list = new List<Product>();
-        
-
+        var receiptList = new List<Sale>();
 
         var ladda = File.ReadAllLines("Products.txt").ToList();
 
@@ -152,6 +158,7 @@ public class App
         foreach (var p in list)
         {
             Console.WriteLine(p.ToString());
+
         }
 
 
@@ -159,32 +166,40 @@ public class App
 
         while (true)
         {
-
             string input = Console.ReadLine().ToLower();
             string[] inputs = input.Split(' ');
+
+            
             if (input == "pay")
             {
+                Console.Clear();
+                Console.WriteLine("");
+                Console.ForegroundColor = ConsoleColor.DarkYellow;
+                Console.WriteLine("---------------------");
+                Console.WriteLine("");
+                
                 sale.PrintReceipt();
                 File.AppendAllText("receipt_" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt", sale.ToString());
 
 
                 break;
             }
-            var pId = Convert.ToInt32(inputs[0]);
+             var pId = Convert.ToInt32(inputs[0]);
              var antal = Convert.ToInt32(inputs[1]);
              var prod = list.FirstOrDefault(p => p.ProductId == pId);
-            if (prod != null) 
+
+            if (prod != null)
             {
+
                 sale.AddItem(prod, antal);
             }
-            
-            
-       
+
+
 
             sale.PrintReceipt();
 
-            
-            
+
+
 
         }
 
@@ -195,9 +210,8 @@ public class App
     public void SaveToFile(List<Product> list)
     {
 
-
         var strings = new List<string>();
-
+   
         foreach (var product in list)
         {
             string productString = product.ProductId + "," + product.Name + "," + product.BasePrice;
@@ -222,8 +236,14 @@ public class App
             if (int.TryParse(Console.ReadLine(), out tal) == false)
             {
 
-                Console.WriteLine("Felaktig inmatning, ange ett tal");
+                Console.WriteLine("Felaktig inmatning, försök igen");
                 continue;
+            }
+            if (tal < min || tal > max)
+            {
+                Console.WriteLine("Felaktig inmatning, ange ett tal som finns på menyn");
+                continue;
+
             }
 
             return tal;

@@ -5,17 +5,19 @@ using System.Collections.Generic;
 
 namespace KassaSystemet
 { 
+     
     public class Product
     {
-        
+
         public int ProductId { get; set; }
         public string Name { get; set; }
         public decimal BasePrice { get; set; }
 
         private string priceType;
 
-     
 
+     
+       
         public void SetPriceType(string value)
         {
             priceType = value;
@@ -29,7 +31,7 @@ namespace KassaSystemet
         }
         public override string ToString()
         {
-            return $"{ProductId} {Name} {BasePrice} {priceType}";
+            return $"{ProductId} {Name} {BasePrice} ";
         }
 
     }
@@ -46,6 +48,7 @@ namespace KassaSystemet
 
         public decimal GetTotalPrice()
         {
+           
                return Ammount * Product.BasePrice;    
         }
 
@@ -82,27 +85,30 @@ namespace KassaSystemet
 
         public decimal GetTotalPrice()
         {
-            decimal total = 0;
-            foreach (SaleItem item in items)
-            {
-                total += item.GetTotalPrice();
-            }
-            return total;
+            return items.Sum(p=>p.GetTotalPrice());
         }
 
         public void AddItem(Product product, decimal Ammount)
         {
-            SaleItem item = new SaleItem(product, Ammount);
-            items.Add(item);
-        }
+            var itwm = items.FirstOrDefault(e=>e.Product.ProductId == product.ProductId);
+            if (itwm != null)
+                itwm.Ammount += Ammount;
+            else
+            {
+                SaleItem item = new SaleItem(product, Ammount);
+                items.Add(item);
+            }
+        }   
 
         public void PrintReceipt()
         {
             List<Product> list = new List<Product>().ToList();
 
             var strings = new List<string>();
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.WriteLine($"KVITTO {date}");
             Console.WriteLine($"{ReceiptNumber}"); 
+            Console.ResetColor();
 
 
             foreach (SaleItem item in items)
@@ -110,9 +116,12 @@ namespace KassaSystemet
                 Console.WriteLine(item);
                 strings.Add(item.ToString());
             }
+            Console.ForegroundColor = ConsoleColor.Green;
             Console.WriteLine($"Total: {GetTotalPrice()}");
+            Console.ResetColor();
+            Console.WriteLine();
             Console.WriteLine("**************************************");
- 
+            Console.WriteLine("");
  
         }
         public override string ToString()
@@ -120,17 +129,20 @@ namespace KassaSystemet
             string s = "";
             s = $"KVITTO {date}" + Environment.NewLine;
             s += $"RECNR {ReceiptNumber}" + Environment.NewLine;
+            s += Environment.NewLine;
             foreach (SaleItem item in items)
             {
                 s += item.ToString() + Environment.NewLine;
             }
+            s += Environment.NewLine;
             s += $"Total: {GetTotalPrice()}" + Environment.NewLine;
+            s += Environment.NewLine;
             s += "**************************************" + Environment.NewLine;
+            s = s + Environment.NewLine;
             return s;
         }
 
-
-
+      
     }
 }
 
