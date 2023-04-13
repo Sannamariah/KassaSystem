@@ -76,10 +76,11 @@ namespace KassaSystemet
         public void NextReceiptNumber()
         {
             ReceiptNumber = 1;
-            if (File.Exists("receiptNumber.txt")){
+            if (File.Exists("receiptNumber.txt"))
+            {
                 ReceiptNumber = Convert.ToInt32(File.ReadAllText("receiptNumber.txt"));
             }
-            File.WriteAllText("receiptNumer.txt", (ReceiptNumber + 1).ToString());
+            File.WriteAllText("receiptNumber.txt", (ReceiptNumber + 1).ToString());
         
         }
 
@@ -127,6 +128,7 @@ namespace KassaSystemet
         public override string ToString()
         {
             string s = "";
+            s += "----------------------------------" + Environment.NewLine;
             s = $"KVITTO {date}" + Environment.NewLine;
             s += $"RECNR {ReceiptNumber}" + Environment.NewLine;
             s += Environment.NewLine;
@@ -137,7 +139,7 @@ namespace KassaSystemet
             s += Environment.NewLine;
             s += $"Total: {GetTotalPrice()}" + Environment.NewLine;
             s += Environment.NewLine;
-            s += "**************************************" + Environment.NewLine;
+            s += "----------------------------------" + Environment.NewLine;
             s = s + Environment.NewLine;
             return s;
         }

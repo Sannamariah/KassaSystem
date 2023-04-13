@@ -160,6 +160,11 @@ public class App
             Console.WriteLine(p.ToString());
 
         }
+        Console.ForegroundColor = ConsoleColor.DarkYellow;
+        Console.WriteLine("---------------------");
+        Console.WriteLine("");
+        Console.ResetColor();
+
 
 
         Sale sale = new Sale();
@@ -174,10 +179,6 @@ public class App
             {
                 Console.Clear();
                 Console.WriteLine("");
-                Console.ForegroundColor = ConsoleColor.DarkYellow;
-                Console.WriteLine("---------------------");
-                Console.WriteLine("");
-                
                 sale.PrintReceipt();
                 File.AppendAllText("receipt_" + DateTime.Now.ToString("yyyy-MM-dd") + ".txt", sale.ToString());
 
